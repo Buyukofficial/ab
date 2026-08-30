@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="NEONEDGE AutoBet Terminal — a fully self-contained educational betting-bot simulation dashboard. Synthetic data only. No real money, no real bets.">
+<meta name="theme-color" content="#05070d">
+<meta name="csrf-token" content="neonedge-sim-9f2c41d8a7b3e6">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://cdn.jsdelivr.net; font-src https://cdn.jsdelivr.net; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'self'">
+<title>NEONEDGE // AutoBet Terminal — Simulation</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%2305070d'/%3E%3Cpath d='M4 12V4l8 8V4' stroke='%2300f0ff' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/orbitron@5.3.0/700.css" integrity="sha384-HsS2+TrIBHQPE8E40wfPfRiycjxUNJHrrvf8UEwY9AyHzpTl66tRn8tvirBLRNUb" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/orbitron@5.3.0/900.css" integrity="sha384-IB3YExPP3tQ/vVQYvuQ4rnzrfO6TV6lgkTeG9U+EuflBPuGr0ovevmWRyZLJ3cow" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/rajdhani@5.3.0/500.css" integrity="sha384-KJbnj8ofDaRl6QfzA2xoMe2BAZzEPcT9NZzVOkVYXeIxCrEG5JMgPvVXSWi4z/Jq" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/rajdhani@5.3.0/600.css" integrity="sha384-RTVbBuwkyFoo8gIDWRJZuwGGoZdQD4dEBozsovh3GudON7dqgSo7h8T5C/dzGT5z" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/rajdhani@5.3.0/700.css" integrity="sha384-IH85OatWOzPjJMuyL0QeIkEsWkbhqR00ADsrZPMjZY2/r0syP6OArzGWhUSH9eEz" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/share-tech-mono@5.3.0/400.css" integrity="sha384-nmJ/o6oZklGtW7EyLezEaOT0mZ4R20L/SAXpHs8gmo4Cb24jsZqCJQcrLOFLBpyU" crossorigin="anonymous">
+<style>
+/* ============================================================
+   NEONEDGE AutoBet Terminal — SIM CORE v4.2.1-PROD
+   Single-file educational simulation. All data is synthetic.
+   ============================================================ */
+:root{
+  --cy:#00f0ff; --pu:#b44bff; --mg:#ff2e88; --gn:#2dffa3; --rd:#ff4d6d; --am:#ffc857;
+  --bg:#05070d; --panel:rgba(12,17,30,.78); --line:rgba(0,240,255,.14); --line2:rgba(0,240,255,.28);
+  --tx:#e9f6ff; --tx2:#9db4cc; --tx3:#6d84a0;
+  --head:'Orbitron',system-ui,sans-serif; --body:'Rajdhani',system-ui,sans-serif; --mono:'Share Tech Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--body);font-weight:500;font-size:16px;line-height:1.45;min-height:100vh;overflow-x:hidden}
+[hidden]{display:none!important}
+.mono{font-family:var(--mono)}
+a{color:var(--cy)}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit}
+:focus-visible{outline:2px solid var(--cy);outline-offset:2px;border-radius:4px}
+::selection{background:rgba(0,240,255,.35)}
+/* Scrollbars */
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:rgba(6,10,20,.6)}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#0a7d8c,#0aa8b8);border-radius:99px;border:2px solid #060a14}
+::-webkit-scrollbar-thumb:hover{background:#00d5e8}
+*{scrollbar-width:thin;scrollbar-color:#0aa8b8 #070b16}
+/* Background FX */
+#bgfx{position:fixed;inset:0;z-index:0;pointer-events:none;background:
+  radial-gradient(1100px 520px at 85% -10%,rgba(180,75,255,.10),transparent 60%),
+  radial-gradient(900px 480px at 8% 108%,rgba(0,240,255,.08),transparent 60%),
+  var(--bg)}
+#bgfx::before{content:"";position:absolute;inset:-40px;background-image:linear-gradient(rgba(0,240,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.045) 1px,transparent 1px);background-size:44px 44px;animation:gridPan 26s linear infinite}
+#bgfx::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px)}
+@keyframes gridPan{to{transform:translate(44px,44px)}}
+/* Screen flash */
+#flashFx{position:fixed;inset:0;z-index:200;pointer-events:none;opacity:0}
+#flashFx.fw{animation:flashA .55s ease-out;background:radial-gradient(circle at 50% 40%,rgba(45,255,163,.28),transparent 70%)}
+#flashFx.fl{animation:flashA .55s ease-out;background:radial-gradient(circle at 50% 40%,rgba(255,77,109,.28),transparent 70%)}
+@keyframes flashA{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
+/* Panels */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;position:relative;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.panel::before,.panel::after{content:"";position:absolute;width:12px;height:12px;pointer-events:none;opacity:.75}
+.panel::before{top:-1px;left:-1px;border-top:2px solid var(--cy);border-left:2px solid var(--cy)}
+.panel::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--cy);border-right:2px solid var(--cy)}
+.p-h{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-family:var(--head);font-weight:700;font-size:11px;letter-spacing:.18em;color:var(--cy);text-transform:uppercase}
+.p-h .rt{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--tx2)}
+.p-b{padding:14px}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line2);background:rgba(0,240,255,.06);color:var(--tx);font-family:var(--head);font-weight:700;font-size:12px;letter-spacing:.12em;padding:10px 14px;border-radius:8px;text-transform:uppercase;transition:transform .15s ease,box-shadow .2s ease,background .2s ease,border-color .2s ease}
+.btn:hover{background:rgba(0,240,255,.14);border-color:var(--cy);box-shadow:0 0 14px rgba(0,240,255,.25)}
+.btn:active{transform:translateY(1px)}
+.btn.sm{padding:7px 10px;font-size:11px}
+.btn-export{border-color:rgba(45,255,163,.35);background:rgba(45,255,163,.07)}
+.btn-export:hover{border-color:var(--gn);box-shadow:0 0 14px rgba(45,255,163,.25);background:rgba(45,255,163,.14)}
+.btn-reset{border-color:rgba(255,77,109,.35);background:rgba(255,77,109,.07)}
+.btn-reset:hover{border-color:var(--rd);box-shadow:0 0 14px rgba(255,77,109,.3);background:rgba(255,77,109,.14)}
+.btn-reset.armed{background:var(--rd);color:#12030a;border-color:var(--rd);animation:armBlink .5s steps(2) infinite}
+@keyframes armBlink{50%{filter:brightness(1.5)}}
+/* Engine button */
+.btn-engine{width:100%;min-height:58px;font-size:16px;letter-spacing:.16em;border-radius:10px;border:1px solid rgba(0,240,255,.5);background:linear-gradient(135deg,#009db3,#00e2f0);color:#02131a;text-shadow:none}
+.btn-engine:hover{box-shadow:0 0 26px rgba(0,240,255,.5)}
+.btn-engine[data-on="1"]{background:linear-gradient(135deg,#b3125e,#ff2e88);border-color:var(--mg);color:#fff;animation:engPulse 1.6s ease-in-out infinite}
+.btn-engine[data-on="1"]:hover{box-shadow:0 0 26px rgba(255,46,136,.55)}
+@keyframes engPulse{0%,100%{box-shadow:0 0 10px rgba(255,46,136,.35)}50%{box-shadow:0 0 30px rgba(255,46,136,.7)}}
+/* ===================== AUTH ===================== */
+.auth{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px 16px}
+.auth-wrap{width:100%;max-width:1060px;display:grid;gap:22px}
+.brand-side{padding:26px 22px;text-align:center}
+.wordmark{font-family:var(--head);font-weight:900;font-size:clamp(30px,6vw,52px);letter-spacing:.14em;line-height:1.05}
+.wordmark .edge{color:var(--cy);text-shadow:0 0 18px rgba(0,240,255,.65)}
+.brand-sub{margin-top:8px;color:var(--tx2);font-size:15px;letter-spacing:.28em;text-transform:uppercase}
+.brand-feats{margin:20px auto 0;display:grid;gap:8px;max-width:420px;text-align:left}
+.brand-feats li{list-style:none;color:var(--tx2);font-size:15px;display:flex;gap:10px;align-items:center}
+.brand-feats li::before{content:"▸";color:var(--cy)}
+.auth-cards{display:grid;gap:16px}
+.auth-row2{display:grid;gap:16px}
+.acard{padding:20px}
+.acard h2{font-family:var(--head);font-size:14px;letter-spacing:.2em;color:var(--cy);margin-bottom:14px}
+.fld{margin-bottom:12px}
+.fld label{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx2);margin-bottom:5px;font-weight:600}
+.fld input{width:100%;background:rgba(3,6,14,.7);border:1px solid var(--line);color:var(--tx);padding:11px 12px;border-radius:8px;font-size:16px;font-weight:600;transition:border-color .2s,box-shadow .2s}
+.fld input:focus{outline:none;border-color:var(--cy);box-shadow:0 0 0 3px rgba(0,240,255,.15)}
+.fld input[aria-invalid="true"]{border-color:var(--rd)}
+.form-err{min-height:18px;color:var(--rd);font-size:13px;font-weight:600;margin:2px 0 8px}
+.btn-wide{width:100%;padding:13px;font-size:14px}
+.btn-signin{background:linear-gradient(135deg,rgba(0,240,255,.18),rgba(0,240,255,.06));border-color:rgba(0,240,255,.5);color:var(--cy)}
+.btn-signup{background:linear-gradient(135deg,rgba(180,75,255,.2),rgba(180,75,255,.06));border-color:rgba(180,75,255,.55);color:#d9a6ff}
+.btn-signup:hover{border-color:var(--pu);box-shadow:0 0 16px rgba(180,75,255,.35)}
+.forgot{display:inline-block;margin-top:10px;font-size:13px;color:var(--tx3);text-decoration:none;border-bottom:1px dotted var(--tx3)}
+.forgot:hover{color:var(--cy);border-color:var(--cy)}
+/* password strength */
+.pwbar{display:flex;gap:5px;margin-top:7px}
+.pwbar i{flex:1;height:5px;border-radius:99px;background:rgba(255,255,255,.09);transition:background .25s}
+.pwbar.s1 i:nth-child(-n+1){background:var(--rd)}
+.pwbar.s2 i:nth-child(-n+2){background:var(--am)}
+.pwbar.s3 i:nth-child(-n+3){background:var(--am)}
+.pwbar.s4 i{background:var(--gn)}
+.pwlab{font-size:12px;color:var(--tx3);margin-top:4px;letter-spacing:.08em}
+/* demo card */
+.acard.demo{border-color:rgba(255,200,87,.5);background:linear-gradient(160deg,rgba(255,200,87,.09),rgba(12,17,30,.8));box-shadow:0 0 26px rgba(255,200,87,.12),inset 0 0 30px rgba(255,200,87,.04)}
+.acard.demo::before,.acard.demo::after{border-color:var(--am)}
+.acard.demo h2{color:var(--am)}
+.demo-big{width:100%;min-height:64px;font-size:18px;letter-spacing:.14em;border:none;border-radius:10px;background:linear-gradient(135deg,#ffb01f,#ffc857);color:#241703;font-family:var(--head);font-weight:900;transition:transform .15s,box-shadow .2s}
+.demo-big:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(255,200,87,.45)}
+.demo-sub{text-align:center;color:var(--tx2);font-size:14px;margin-top:10px}
+.auth-note{margin-top:18px;padding:12px 16px;font-size:12.5px;color:var(--tx3);border:1px dashed rgba(255,200,87,.3);border-radius:8px;line-height:1.5}
+/* ===================== APP ===================== */
+#appView{position:relative;z-index:2}
+.hdr{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 16px;background:rgba(5,7,13,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.hdr .wordmark{font-size:20px}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--head);font-size:11px;font-weight:700;letter-spacing:.16em;padding:6px 12px;border-radius:999px;border:1px solid;text-transform:uppercase}
+.pill i{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor}
+.pill[data-state="IDLE"]{color:#9db4cc;border-color:rgba(157,180,204,.4);background:rgba(157,180,204,.08)}
+.pill[data-state="SCANNING"]{color:var(--cy);border-color:rgba(0,240,255,.5);background:rgba(0,240,255,.08);animation:pillBlink 1.2s ease-in-out infinite}
+.pill[data-state="WAITING"]{color:var(--am);border-color:rgba(255,200,87,.5);background:rgba(255,200,87,.08)}
+.pill[data-state="BETTING"]{color:#d98bff;border-color:rgba(180,75,255,.6);background:rgba(180,75,255,.12);animation:pillBlink 1s ease-in-out infinite}
+.pill[data-state="ERROR"]{color:var(--rd);border-color:rgba(255,77,109,.6);background:rgba(255,77,109,.12);animation:pillBlink .7s ease-in-out infinite}
+@keyframes pillBlink{50%{opacity:.55}}
+.hdr-stat{font-family:var(--mono);font-size:12.5px;color:var(--tx2);padding:5px 9px;border:1px solid var(--line);border-radius:7px;background:rgba(0,240,255,.03)}
+.hdr-stat b{color:var(--cy);font-weight:400}
+.badge-sim{font-family:var(--head);font-size:10px;font-weight:700;letter-spacing:.16em;color:#241703;background:var(--am);padding:6px 10px;border-radius:6px}
+.btn-out{padding:6px 10px;font-size:10px}
+.demo-banner{display:flex;align-items:center;gap:10px;justify-content:center;background:var(--am);color:#241703;font-weight:700;font-size:14px;padding:8px 14px;letter-spacing:.04em}
+.demo-banner button{border:none;background:rgba(0,0,0,.15);color:#241703;border-radius:6px;padding:3px 9px;font-weight:700}
+/* Stats grid */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px 14px 0}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 13px;min-width:0;position:relative;transition:border-color .25s}
+.t-l{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);font-weight:700}
+.t-v{font-family:var(--mono);font-size:clamp(17px,1.7vw,22px);margin:3px 0 2px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-s{font-size:12px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pos{color:var(--gn)!important;text-shadow:0 0 12px rgba(45,255,163,.35)}
+.neg{color:var(--rd)!important;text-shadow:0 0 12px rgba(255,77,109,.35)}
+.warn{color:var(--am)!important}
+.tile.pulse-ring{animation:ringPulse .8s ease-out}
+@keyframes ringPulse{0%{box-shadow:0 0 0 0 rgba(0,240,255,.6)}100%{box-shadow:0 0 0 16px rgba(0,240,255,0)}}
+.tile.flash-tile{animation:tileFlash .7s ease-out}
+@keyframes tileFlash{0%{border-color:var(--cy);background:rgba(0,240,255,.14)}100%{}}
+/* Layout */
+.layout{display:grid;gap:14px;padding:14px;grid-template-columns:1fr;align-items:start}
+.col{display:grid;gap:14px;min-width:0}
+/* Control deck */
+.ctl-sec{padding:12px 14px;border-bottom:1px solid var(--line)}
+.ctl-sec:last-child{border-bottom:none}
+.ctl-lab{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);font-weight:700;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.led-row{display:flex;align-items:center;gap:10px}
+.led{width:12px;height:12px;border-radius:50%;background:#3a4a60;flex:none}
+.led.on{background:var(--gn);box-shadow:0 0 10px var(--gn),0 0 20px rgba(45,255,163,.6);animation:ledPulse 1.3s ease-in-out infinite}
+.led.err{background:var(--rd);box-shadow:0 0 10px var(--rd)}
+@keyframes ledPulse{50%{opacity:.45}}
+#engTxt{font-family:var(--head);font-size:12px;letter-spacing:.18em;color:var(--tx2)}
+.scan-cd{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+#scanCd{font-family:var(--mono);font-size:22px;color:var(--cy);text-shadow:0 0 12px rgba(0,240,255,.4)}
+.sfx-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.btn-sfx[aria-pressed="true"]{background:rgba(45,255,163,.14);border-color:var(--gn);color:var(--gn)}
+/* sliders */
+input[type=range]{width:100%;appearance:none;-webkit-appearance:none;height:6px;border-radius:99px;background:linear-gradient(90deg,rgba(0,240,255,.55),rgba(180,75,255,.55));outline-offset:6px}
+input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#eaffff;border:3px solid var(--cy);box-shadow:0 0 10px rgba(0,240,255,.7);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#eaffff;border:3px solid var(--cy);box-shadow:0 0 10px rgba(0,240,255,.7);cursor:pointer}
+.out-val{font-family:var(--mono);color:var(--cy);font-size:14px}
+.money-wrap{display:flex;align-items:center;background:rgba(3,6,14,.7);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.money-wrap:focus-within{border-color:var(--cy);box-shadow:0 0 0 3px rgba(0,240,255,.15)}
+.money-wrap span{padding:0 4px 0 12px;color:var(--tx3);font-family:var(--mono)}
+.money-wrap input{flex:1;min-width:0;background:transparent;border:none;color:var(--tx);font-family:var(--mono);font-size:15px;padding:10px 12px 10px 4px}
+.money-wrap input:focus{outline:none}
+/* switch */
+.sw{position:relative;width:52px;height:26px;border-radius:99px;border:1px solid var(--line2);background:rgba(255,255,255,.07);transition:background .2s,border-color .2s;flex:none}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#8ea6bf;transition:transform .2s,background .2s}
+.sw[aria-checked="true"]{background:rgba(45,255,163,.22);border-color:var(--gn)}
+.sw[aria-checked="true"]::after{transform:translateX(26px);background:var(--gn);box-shadow:0 0 10px var(--gn)}
+.guard-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hint{font-size:11.5px;color:var(--tx3);margin-top:5px}
+.kbd-hints{padding:10px 14px;font-size:11.5px;color:var(--tx3);border-top:1px solid var(--line);font-family:var(--mono)}
+.kbd-hints kbd{background:rgba(0,240,255,.1);border:1px solid var(--line2);border-radius:4px;padding:1px 6px;color:var(--cy);font-family:var(--mono)}
+/* Decision engine */
+.dec-badge{font-family:var(--head);font-size:11px;font-weight:700;letter-spacing:.2em;padding:5px 12px;border-radius:6px;border:1px solid;display:inline-block}
+.dec-badge[data-state="STANDBY"]{color:#9db4cc;border-color:rgba(157,180,204,.4)}
+.dec-badge[data-state="SCANNING"]{color:var(--cy);border-color:rgba(0,240,255,.5);animation:pillBlink 1.2s infinite}
+.dec-badge[data-state="WAITING"]{color:var(--am);border-color:rgba(255,200,87,.5)}
+.dec-badge[data-state="BETTING"]{color:#d98bff;border-color:rgba(180,75,255,.6)}
+.dec-badge[data-state="ERROR"]{color:var(--rd);border-color:rgba(255,77,109,.6)}
+.dec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:12px}
+.d-item{background:rgba(3,6,14,.55);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+.d-item .dl{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);font-weight:700}
+.d-item .dv{font-family:var(--mono);font-size:14px;margin-top:3px;word-break:break-word}
+.dec-ev{margin-top:12px;font-size:16px;font-weight:700;color:var(--tx)}
+.dec-ev small{display:block;font-weight:600;color:var(--tx2);font-size:13px}
+.dec-reason{margin-top:12px;padding:10px 12px;border-left:3px solid var(--cy);background:rgba(0,240,255,.05);border-radius:0 8px 8px 0;color:var(--tx2);font-size:14px;line-height:1.55}
+.act-badge{display:inline-block;font-family:var(--head);font-size:11px;font-weight:700;letter-spacing:.16em;padding:5px 12px;border-radius:6px;margin-top:12px}
+.act-bet{background:rgba(45,255,163,.15);color:var(--gn);border:1px solid var(--gn);box-shadow:0 0 14px rgba(45,255,163,.25)}
+.act-nobet{background:rgba(255,200,87,.1);color:var(--am);border:1px solid rgba(255,200,87,.5)}
+/* Open bet */
+.open-bet{margin-top:14px;border:1px solid rgba(180,75,255,.5);background:linear-gradient(160deg,rgba(180,75,255,.12),rgba(12,17,30,.6));border-radius:10px;padding:12px 14px;box-shadow:0 0 18px rgba(180,75,255,.15);display:none}
+.open-bet.show{display:block;animation:obIn .3s ease-out}
+@keyframes obIn{from{opacity:0;transform:translateY(6px)}}
+.ob-h{display:flex;justify-content:space-between;gap:10px;font-family:var(--head);font-size:11px;letter-spacing:.16em;color:#d98bff;font-weight:700}
+#obTime{font-family:var(--mono);color:var(--am);letter-spacing:.04em}
+.ob-ev{margin-top:6px;font-weight:700}
+.ob-ev small{color:var(--tx2);font-weight:600;display:block;font-size:13px}
+.ob-nums{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-family:var(--mono);font-size:13.5px;color:var(--tx2)}
+.ob-nums b{color:var(--cy);font-weight:400}
+.ob-bar{margin-top:10px;height:8px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.ob-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pu),var(--mg));border-radius:99px;box-shadow:0 0 10px rgba(255,46,136,.6);transition:width .12s linear}
+/* Chart */
+.chart-wrap{position:relative;height:250px;padding:8px}
+.chart-wrap canvas{display:block;width:100%;height:100%;cursor:crosshair}
+.chart-tip{position:absolute;pointer-events:none;background:rgba(5,8,16,.94);border:1px solid var(--cy);color:var(--tx);font-family:var(--mono);font-size:12px;padding:6px 9px;border-radius:6px;opacity:0;transition:opacity .12s;white-space:nowrap;z-index:5;box-shadow:0 0 14px rgba(0,240,255,.25)}
+/* History */
+.hist-scroll{max-height:330px;overflow:auto}
+table.hist{width:100%;border-collapse:collapse;font-size:13.5px}
+.hist thead th{position:sticky;top:0;z-index:2;background:#0a0f1e;font-family:var(--head);font-size:10px;letter-spacing:.16em;color:var(--tx2);text-transform:uppercase;padding:9px 10px;text-align:left;border-bottom:1px solid var(--line2)}
+.hist td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.045);vertical-align:middle}
+.hist .num{text-align:right}
+.hist th.num{text-align:right}
+.hrow.win{background:rgba(45,255,163,.055);box-shadow:inset 3px 0 0 var(--gn)}
+.hrow.loss{background:rgba(255,77,109,.055);box-shadow:inset 3px 0 0 var(--rd)}
+.hrow.anim{animation:rowIn .45s ease-out}
+@keyframes rowIn{from{opacity:0;transform:translateY(-7px)}}
+.res-badge{font-family:var(--head);font-size:10px;font-weight:700;letter-spacing:.14em;padding:3px 8px;border-radius:5px}
+.res-badge.w{background:rgba(45,255,163,.14);color:var(--gn);border:1px solid rgba(45,255,163,.5)}
+.res-badge.l{background:rgba(255,77,109,.14);color:var(--rd);border:1px solid rgba(255,77,109,.5)}
+.ev-cell small{display:block;color:var(--tx3);font-size:11.5px}
+.empty-state{padding:34px 16px;text-align:center;color:var(--tx3);font-size:13.5px;letter-spacing:.08em}
+.empty-state b{display:block;font-family:var(--head);font-size:14px;letter-spacing:.2em;color:var(--tx2);margin-bottom:6px}
+/* API panel */
+.api-top{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--gn);box-shadow:0 0 9px var(--gn);animation:ledPulse 2s infinite}
+.api-top .st{font-family:var(--head);font-size:12px;letter-spacing:.18em;color:var(--gn)}
+.api-url{font-family:var(--mono);font-size:12px;color:var(--cy);background:rgba(0,240,255,.06);border:1px solid var(--line);border-radius:6px;padding:6px 9px;word-break:break-all}
+.api-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.api-cell{background:rgba(3,6,14,.55);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.api-cell .al{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);font-weight:700}
+.api-cell .av{font-family:var(--mono);font-size:15px;margin-top:2px;color:var(--tx)}
+/* Feed */
+.feed{height:295px;overflow:auto;padding:8px 10px;font-family:var(--mono);font-size:12px}
+.fl{display:grid;grid-template-columns:92px 46px 1fr;gap:8px;padding:3px 0;border-bottom:1px dashed rgba(255,255,255,.04);align-items:baseline}
+.fl .ft{color:var(--tx3)}
+.fl .tag{font-weight:700;letter-spacing:.06em}
+.t-GET{color:var(--cy)}.t-POST{color:#c98bff}.t-WS{color:var(--am)}.t-OK{color:var(--gn)}.t-ERR{color:var(--rd)}.t-SYS{color:#8ea6bf}
+.fl .fm{color:var(--tx2);word-break:break-word}
+/* Footer */
+.disc{margin:0 14px 14px;padding:16px;border-color:rgba(255,200,87,.35)}
+.disc h3{font-family:var(--head);font-size:12px;letter-spacing:.16em;color:var(--am);margin-bottom:8px}
+.disc p{font-size:13.5px;color:var(--tx2);line-height:1.6;max-width:1100px}
+.foot-note{text-align:center;font-family:var(--mono);font-size:11px;color:var(--tx3);padding:0 14px 20px;letter-spacing:.08em}
+/* Toasts */
+#toasts{position:fixed;top:14px;right:14px;z-index:300;display:grid;gap:8px;max-width:min(340px,90vw)}
+.toast{border:1px solid;border-radius:8px;padding:10px 14px;font-weight:600;font-size:14px;background:rgba(8,12,22,.94);backdrop-filter:blur(8px);opacity:0;transform:translateX(14px);transition:opacity .25s,transform .25s;box-shadow:0 6px 22px rgba(0,0,0,.45)}
+.toast.in{opacity:1;transform:none}
+.t-ok{border-color:var(--gn);color:var(--gn)}
+.t-err{border-color:var(--rd);color:var(--rd)}
+.t-info{border-color:var(--cy);color:var(--cy)}
+.t-warn{border-color:var(--am);color:var(--am)}
+/* Responsive */
+@media(min-width:640px){
+  .stats{grid-template-columns:repeat(4,1fr)}
+  .auth-row2{grid-template-columns:1fr 1fr}
+  .brand-side{text-align:left}
+  .auth-wrap{max-width:1060px}
+}
+@media(min-width:1020px){
+  .layout{grid-template-columns:308px minmax(0,1fr)}
+  .stats{grid-template-columns:repeat(4,1fr)}
+}
+@media(min-width:1200px){
+  .layout{grid-template-columns:308px minmax(0,1fr) 328px}
+  .stats{grid-template-columns:repeat(8,1fr)}
+  .chart-wrap{height:280px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<div id="bgfx" aria-hidden="true"></div>
+<div id="flashFx" aria-hidden="true"></div>
+<div id="toasts" aria-live="polite" aria-label="Notifications"></div>
+
+<!-- ============================ AUTH ============================ -->
+<section id="authView" class="auth" aria-label="Sign in to NEONEDGE">
+  <div class="auth-wrap">
+    <div class="brand-side panel">
+      <div class="wordmark">NEON<span class="edge">EDGE</span></div>
+      <div class="brand-sub">AutoBet Terminal · SIM CORE v4.2.1</div>
+      <ul class="brand-feats">
+        <li>Kelly-criterion staking engine with adjustable fraction</li>
+        <li>Synthetic live-odds feed · 8 simulated sports markets</li>
+        <li>Drawdown guard, live feed, CSV export — all in-browser</li>
+        <li>100% educational simulation — no real money, ever</li>
+      </ul>
+      <p class="auth-note">⚠ EDUCATIONAL SIMULATION ONLY — NO REAL MONEY, NO REAL BETS. This terminal never connects to any bookmaker, exchange or payment system and must never be used to guide real-money wagering.</p>
+    </div>
+    <div class="auth-cards">
+      <div class="auth-row2">
+        <form id="frmSignin" class="panel acard" novalidate aria-label="Sign in form">
+          <h2>◈ SIGN IN</h2>
+          <div class="fld">
+            <label for="siEmail">Email</label>
+            <input id="siEmail" type="email" autocomplete="email" placeholder="operator@neonedge.com" required>
+          </div>
+          <div class="fld">
+            <label for="siPass">Password</label>
+            <input id="siPass" type="password" autocomplete="current-password" placeholder="••••••••" required>
+          </div>
+          <div class="form-err" id="siErr" role="alert" aria-live="assertive"></div>
+          <button type="submit" class="btn btn-signin btn-wide" id="btnSignin">Sign In</button>
+          <a href="#" class="forgot" id="lnkForgot">Forgot password?</a>
+        </form>
+        <form id="frmSignup" class="panel acard" novalidate aria-label="Create account form">
+          <h2>◈ CREATE ACCOUNT</h2>
+          <div class="fld">
+            <label for="suName">Name</label>
+            <input id="suName" type="text" autocomplete="name" placeholder="Ada Nakamura" required>
+          </div>
+          <div class="fld">
+            <label for="suEmail">Email</label>
+            <input id="suEmail" type="email" autocomplete="email" placeholder="you@example.com" required>
+          </div>
+          <div class="fld">
+            <label for="suPass">Password</label>
+            <input id="suPass" type="password" autocomplete="new-password" placeholder="min. 8 characters" required>
+            <div class="pwbar" id="pwBar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <div class="pwlab" id="pwLabel" aria-live="polite">Strength: —</div>
+          </div>
+          <div class="fld">
+            <label for="suPass2">Confirm Password</label>
+            <input id="suPass2" type="password" autocomplete="new-password" placeholder="repeat password" required>
+          </div>
+          <div class="form-err" id="suErr" role="alert" aria-live="assertive"></div>
+          <button type="submit" class="btn btn-signup btn-wide" id="btnSignup">Create Account</button>
+        </form>
+      </div>
+      <div class="panel acard demo" aria-label="Demo mode">
+        <h2>◈ DEMO MODE — RECOMMENDED</h2>
+        <button type="button" class="demo-big" id="btnDemo" aria-label="Launch instant demo, no registration needed">🚀 Launch Demo</button>
+        <p class="demo-sub">Instant access – no registration needed · auto-login as <span class="mono">demo@neonedge.com</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ APP ============================ -->
+<section id="appView" hidden aria-label="NEONEDGE dashboard">
+  <header class="hdr">
+    <div class="wordmark">NEON<span class="edge">EDGE</span></div>
+    <div class="hdr-right">
+      <span class="pill" id="pillStatus" data-state="IDLE" role="status"><i aria-hidden="true"></i><span id="pillTxt">IDLE</span></span>
+      <span class="hdr-stat" title="API latency">⌁ <b id="hdrLatency">24ms</b></span>
+      <span class="hdr-stat" id="hdrClock" title="System clock">00:00:00</span>
+      <span class="badge-sim">SIM MODE · NO REAL MONEY</span>
+      <button class="btn btn-out" id="btnSignout" aria-label="Sign out">Sign out</button>
+    </div>
+  </header>
+  <div class="demo-banner" id="demoBanner" hidden>
+    <span>🔍 You're in Demo Mode — signed in as demo@neonedge.com. All data is synthetic.</span>
+    <button id="demoClose" aria-label="Dismiss demo banner">✕</button>
+  </div>
+
+  <!-- STATS GRID -->
+  <div class="stats" role="group" aria-label="Session statistics">
+    <div class="tile" id="tileBank"><div class="t-l">Bankroll</div><div class="t-v" id="vBank">$10,000.00</div><div class="t-s" id="sBank">peak $10,000.00 · dd 0.0%</div></div>
+    <div class="tile" id="tilePnl"><div class="t-l">Session P&amp;L</div><div class="t-v" id="vPnl">+$0.00</div><div class="t-s">vs $10k start</div></div>
+    <div class="tile"><div class="t-l">ROI</div><div class="t-v" id="vRoi">+0.0%</div><div class="t-s">profit / staked</div></div>
+    <div class="tile"><div class="t-l">Win Rate</div><div class="t-v" id="vWr">0.0%</div><div class="t-s" id="sWr">last 10: 0W–0L</div></div>
+    <div class="tile"><div class="t-l">Total Bets</div><div class="t-v" id="vBets">0</div><div class="t-s" id="sBets">$0.00 staked</div></div>
+    <div class="tile"><div class="t-l">Wins · Losses</div><div class="t-v" id="vWL">0 – 0</div><div class="t-s">settled bets</div></div>
+    <div class="tile"><div class="t-l">Streak</div><div class="t-v" id="vStreak">—</div><div class="t-s" id="sStreak">best W0</div></div>
+    <div class="tile"><div class="t-l">Avg Odds</div><div class="t-v" id="vOdds">—</div><div class="t-s">range 1.50 – 5.00</div></div>
+  </div>
+
+  <div class="layout">
+    <!-- ============ LEFT · CONTROL DECK ============ -->
+    <aside class="col" aria-label="Bot controls">
+      <div class="panel">
+        <div class="p-h">◢ Control Deck <span class="rt" id="ledWrap"><span class="led" id="ledEng" aria-hidden="true"></span></span></div>
+        <div class="ctl-sec">
+          <button class="btn btn-engine" id="btnEngine" data-on="0" aria-pressed="false" aria-label="Start or stop the bot engine">▶ &nbsp;START BOT</button>
+          <div class="led-row" style="margin-top:12px">
+            <span class="led" id="ledEng2" aria-hidden="true"></span><span id="engTxt">ENGINE STANDBY</span>
+          </div>
+          <div class="scan-cd" style="margin-top:12px">
+            <span class="ctl-lab" style="margin:0">Next Scan</span>
+            <span id="scanCd" aria-live="off">—</span>
+          </div>
+          <div class="sfx-row" style="margin-top:12px">
+            <span class="ctl-lab" style="margin:0">SFX</span>
+            <button class="btn sm btn-sfx" id="btnSfx" aria-pressed="false" aria-label="Toggle sound effects">SFX OFF</button>
+          </div>
+        </div>
+        <div class="ctl-sec">
+          <div class="ctl-lab"><label for="rngSpeed">Sim Speed</label><output class="out-val" id="outSpeed" for="rngSpeed">1.00×</output></div>
+          <input type="range" id="rngSpeed" min="1" max="5" step="0.25" value="1" aria-label="Simulation speed, 1x to 5x — compresses the 3 to 8 second bet cycle">
+          <div class="hint">Compresses the 3–8s bet cycle</div>
+        </div>
+        <div class="ctl-sec">
+          <div class="ctl-lab"><label for="rngKelly">Kelly Multiplier</label><output class="out-val" id="outKelly" for="rngKelly">0.50×</output></div>
+          <input type="range" id="rngKelly" min="0.25" max="1.5" step="0.05" value="0.5" aria-label="Kelly multiplier, 0.25x to 1.5x — fraction of full Kelly stake">
+          <div class="hint">Fraction of full-Kelly stake</div>
+        </div>
+        <div class="ctl-sec">
+          <div class="ctl-lab"><label for="numStake">Max Stake / Bet</label></div>
+          <div class="money-wrap"><span aria-hidden="true">$</span><input type="number" id="numStake" min="10" max="25000" step="10" value="500" inputmode="numeric" aria-label="Maximum stake per bet in dollars, 10 to 25000"></div>
+        </div>
+        <div class="ctl-sec">
+          <div class="ctl-lab" id="guardLab">Drawdown Guard</div>
+          <div class="guard-row">
+            <div>
+              <div class="hint" style="margin:0" id="guardTxt">ARMED — auto-stop at −25% from bankroll peak</div>
+            </div>
+            <button class="sw" id="btnGuard" role="switch" aria-checked="true" aria-labelledby="guardLab" aria-label="Drawdown guard: auto-stop at minus 25 percent from bankroll peak"></button>
+          </div>
+        </div>
+        <div class="ctl-sec" style="display:flex;gap:10px">
+          <button class="btn btn-export" id="btnExport" style="flex:1">⇩ Export CSV</button>
+          <button class="btn btn-reset" id="btnReset" style="flex:1">⟳ Reset Session</button>
+        </div>
+        <div class="kbd-hints"><kbd>SPACE</kbd> start/stop · <kbd>R</kbd> reset · <kbd>E</kbd> export</div>
+      </div>
+    </aside>
+
+    <!-- ============ CENTER ============ -->
+    <main class="col" aria-label="Engine, bankroll chart and bet history">
+      <div class="panel">
+        <div class="p-h">◢ Bot Decision Engine <span class="rt"><span class="dec-badge" id="decBadge" data-state="STANDBY">STANDBY</span></span></div>
+        <div class="p-b" id="decContent">
+          <div class="empty-state" style="padding:18px 6px"><b>ENGINE STANDBY</b>Engine offline. Press <span style="color:var(--cy)">START BOT</span> to begin scanning live markets for value.</div>
+        </div>
+        <div class="p-b" style="padding-top:0">
+          <div class="open-bet" id="openBet" aria-label="Open bet">
+            <div class="ob-h"><span>OPEN BET</span><span id="obTime">SETTLES IN —</span></div>
+            <div class="ob-ev" id="obEvent">— <small id="obMarket">—</small></div>
+            <div class="ob-nums"><span>Odds: <b id="obOdds">–</b></span><span>Stake: <b id="obStake">–</b></span><span>Return: <b id="obReturn">–</b></span></div>
+            <div class="ob-bar"><i id="obBar"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="p-h">◢ Bankroll Growth · Last 50 Bets <span class="rt" id="chartDelta">Δ $0.00</span></div>
+        <div class="chart-wrap" id="chartWrap">
+          <canvas id="chartCanvas" role="img" aria-label="Line chart of bankroll over the last 50 settled bets"></canvas>
+          <div class="chart-tip mono" id="chartTip"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="p-h">◢ Bet History <span class="rt" id="histCount">0 bets</span></div>
+        <div class="hist-scroll" id="histScroll">
+          <table class="hist" aria-label="Bet history">
+            <thead><tr><th>Time</th><th>Event</th><th class="num">Odds</th><th class="num">Stake</th><th>Result</th><th class="num">P&amp;L</th></tr></thead>
+            <tbody id="histBody"></tbody>
+          </table>
+          <div class="empty-state" id="histEmpty"><b>NO BETS YET</b>START THE ENGINE TO GENERATE SYNTHETIC ACTION</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============ RIGHT ============ -->
+    <aside class="col" aria-label="Odds API and live feed">
+      <div class="panel">
+        <div class="p-h">◢ Odds API</div>
+        <div class="p-b">
+          <div class="api-top"><span class="dot" aria-hidden="true"></span><span class="st">CONNECTED</span></div>
+          <div class="api-url">wss://odds.neonedge.sim/v2</div>
+          <div class="api-grid">
+            <div class="api-cell"><div class="al">Latency</div><div class="av" id="apiLat">24ms</div></div>
+            <div class="api-cell"><div class="al">Region</div><div class="av">eu-west-sim</div></div>
+            <div class="api-cell"><div class="al">Uptime</div><div class="av" id="apiUptime">00:00:00</div></div>
+            <div class="api-cell"><div class="al">Packets</div><div class="av" id="apiPackets">0</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="p-h">◢ Live Wire · API Feed <span class="rt">synthetic traffic</span></div>
+        <div class="feed" id="feedList" role="log" aria-label="Live API activity feed"></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <footer>
+    <div class="panel disc">
+      <h3>⚠ EDUCATIONAL SIMULATION ONLY — NO REAL MONEY, NO REAL BETS.</h3>
+      <p>This dashboard is a fully self-contained software simulator. All odds, events and outcomes are generated randomly inside your browser. It does NOT connect to any bookmaker, exchange, odds feed or payment system, holds no real funds, and must never be used to guide real-money wagering. Gambling carries serious financial and psychological risk. If you or someone you know struggles with gambling, contact a licensed support service in your jurisdiction.</p>
+    </div>
+    <div class="foot-note">NEONEDGE SIM CORE v4.2.1-PROD · KELLY ENGINE · ALL DATA SYNTHETIC · STATE PERSISTED LOCALLY</div>
+  </footer>
+</section>
+
+<noscript><div style="position:fixed;inset:0;background:#05070d;color:#e9f6ff;display:flex;align-items:center;justify-content:center;font-family:sans-serif;padding:20px;text-align:center">NEONEDGE AutoBet Terminal requires JavaScript to run the simulation.</div></noscript>
+
+<script>
+'use strict';
+(function(){
+/* ================================================================
+   0. HELPERS
+================================================================ */
+const $=function(s){return document.querySelector(s);};
+const KEY_STATE='neonedge.v4.state', KEY_AUTH='neonedge.v4.auth', KEY_LOCK='neonedge.v4.lock';
+const store={
+  get:function(k){try{return localStorage.getItem(k);}catch(e){return null;}},
+  set:function(k,v){try{localStorage.setItem(k,v);}catch(e){}},
+  del:function(k){try{localStorage.removeItem(k);}catch(e){}}
+};
+const rnd=function(a,b){return a+Math.random()*(b-a);};
+const irnd=function(a,b){return Math.floor(rnd(a,b+1));};
+const clamp=function(v,a,b){return Math.max(a,Math.min(b,v));};
+const pad=function(n){return String(n).padStart(2,'0');};
+const fmt$=function(v){const s=v<0?'-':'';return s+'$'+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+const signed$=function(v){return (v>=0?'+':'-')+'$'+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+const hhmmss=function(d){return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());};
+const hhmmssms=function(d){return hhmmss(d)+'.'+String(d.getMilliseconds()).padStart(3,'0');};
+const emailOk=function(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);};
+function el(tag,cls,txt){const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n;}
+
+/* ================================================================
+   1. SYNTHETIC DATA ENGINE — 8 sports
+================================================================ */
+const SPORTS=[
+ {k:'cs2',label:'CS2',teams:['Nova Kings','Iron Wolves','Void Reapers','Crimson Five','Aether Squad','Null Sector','Ghost Protocol','Titan Forge'],markets:['Match Winner','Map Handicap −1.5','Total Rounds O/U 26.5']},
+ {k:'dota2',label:'Dota 2',teams:['Azure Talon','Dire Havoc','Frostbyte','Ember Court','Silver Pines','Hex Legion','Storm Vanguard','Obsidian Nine','Wraith Union'],markets:['Match Winner','Spread −1.5 Maps','Total Maps O/U 2.5']},
+ {k:'lol',label:'LoL',teams:['Solar Flare','Night Syndicate','Pixel Ronin','Chrono Five','Mecha Drakes','Frost Foxes','Neon Serpents'],markets:['Match Winner','Handicap −1.5','Total Kills O/U 27.5']},
+ {k:'valorant',label:'Valorant',teams:['Ghostline','Viper Unit','Havoc Nine','Zero Day','Crimson Aim','Static Owls','Iron Lotus','Byte Raiders'],markets:['Match Winner','Map Spread','Total Rounds O/U 24.5']},
+ {k:'nba',label:'NBA',teams:['Bayline Hawks','Motor City Kings','Desert Rattlers','Harbor Giants','Northwoods Bears','Golden Bay Suns','Rivertown Aces','Skyline Wolves','Capital Monarchs','Gulf Storm'],markets:['Moneyline','Spread −4.5','Total Points O/U 221.5']},
+ {k:'soccer',label:'Soccer',teams:['Atlético Nova','FC Meridian','Sporting Vortex','Real Halcyon','Inter Cobalt','Dynamo Verge','United Crest','Olympic Riviera','Racing Solace'],markets:['1X2 · Home','Asian Handicap −0.5','Goals O/U 2.5']},
+ {k:'tennis',label:'Tennis',teams:['Ilya Vanta','Marco Reyes','Daniil Okafor','Yuki Tanaro','Leo Brandt','Andre Sousa','Mikhail Zarek','Tomás Verane'],markets:['Match Winner','Set Handicap −1.5','Total Games O/U 21.5']},
+ {k:'mma',label:'MMA',teams:['Rex Carver','Bishop Kane','Niko Drayle','Sam Torres','Viktor Hale','Jordan Pike','Diego Marsh','Cyrus Boone'],markets:['Fight Winner','Rounds O/U 2.5','Method · KO/Sub']}
+];
+function genEvent(){
+  const s=SPORTS[irnd(0,SPORTS.length-1)];
+  const pool=s.teams, i=irnd(0,pool.length-1);
+  let j=irnd(0,pool.length-2); if(j>=i)j++;
+  return {
+    slug:s.k, label:s.label, a:pool[i], b:pool[j], title:pool[i]+' vs '+pool[j],
+    market:s.markets[irnd(0,s.markets.length-1)],
+    odds:Math.round(rnd(1.5,5.0)*100)/100,
+    trueP:rnd(0.40,0.75),
+    evId:'EVT-'+irnd(4000,9999)
+  };
+}
+function evaluate(ev,kellyMult){
+  const imp=100/ev.odds;
+  const model=clamp(ev.trueP*100+rnd(-4,4),5,95);
+  const edge=model-imp;
+  const b=ev.odds-1, p=model/100;
+  let f=(b*p-(1-p))/b; if(!isFinite(f)||f<0)f=0;
+  let stake=Math.floor(S.balance*f*kellyMult);
+  stake=Math.min(stake,S.settings.maxStake);
+  const bet=edge>=3.0 && f>0 && stake>=5 && S.balance>=5;
+  return {imp:imp,model:model,edge:edge,f:f*100,stake:bet?stake:0,bet:bet};
+}
+
+/* ================================================================
+   2. STATE + PERSISTENCE
+================================================================ */
+function freshDefaults(){
+  return {running:false,balance:10000,peak:10000,wins:0,losses:0,bets:0,totalStaked:0,oddsSum:0,
+    streak:0,bestWin:0,history:[],series:[10000],pending:null,
+    settings:{speed:1,kelly:0.5,maxStake:500,guard:true,sfx:false}};
+}
+let S=freshDefaults();
+function save(){
+  const d={balance:S.balance,peak:S.peak,wins:S.wins,losses:S.losses,bets:S.bets,totalStaked:S.totalStaked,
+    oddsSum:S.oddsSum,streak:S.streak,bestWin:S.bestWin,history:S.history,series:S.series,pending:S.pending,
+    settings:S.settings,savedAt:Date.now()};
+  store.set(KEY_STATE,JSON.stringify(d));
+}
+function loadState(){
+  const raw=store.get(KEY_STATE); if(!raw)return;
+  try{
+    const d=JSON.parse(raw), F=freshDefaults();
+    const num=function(v,fb){return (typeof v==='number'&&isFinite(v))?v:fb;};
+    S.balance=num(d.balance,10000); S.peak=num(d.peak,10000); S.wins=num(d.wins,0)|0; S.losses=num(d.losses,0)|0;
+    S.bets=num(d.bets,0)|0; S.totalStaked=num(d.totalStaked,0); S.oddsSum=num(d.oddsSum,0);
+    S.streak=num(d.streak,0)|0; S.bestWin=num(d.bestWin,0)|0;
+    if(Array.isArray(d.history))S.history=d.history.filter(function(h){return h&&typeof h==='object';}).slice(-300);
+    if(Array.isArray(d.series)&&d.series.length)S.series=d.series.filter(function(v){return typeof v==='number'&&isFinite(v);}).slice(-400);
+    if(!S.series.length)S.series=[10000];
+    if(d.pending&&typeof d.pending==='object'&&typeof d.pending.settleAt==='number')S.pending=d.pending;
+    if(d.settings&&typeof d.settings==='object'){
+      S.settings.speed=clamp(num(d.settings.speed,1),1,5);
+      S.settings.kelly=clamp(num(d.settings.kelly,0.5),0.25,1.5);
+      S.settings.maxStake=clamp(num(d.settings.maxStake,500),10,25000);
+      S.settings.guard=d.settings.guard!==false;
+      S.settings.sfx=d.settings.sfx===true;
+    }
+  }catch(e){S=freshDefaults();}
+}
+
+/* ================================================================
+   3. AUDIO (WebAudio SFX)
+================================================================ */
+const SFX={
+  ctx:null,
+  ensure:function(){
+    try{
+      if(!this.ctx){const AC=window.AudioContext||window.webkitAudioContext;if(AC)this.ctx=new AC();}
+      if(this.ctx&&this.ctx.state==='suspended')this.ctx.resume();
+    }catch(e){this.ctx=null;}
+  },
+  tone:function(f,d,type,g,when){
+    const c=this.ctx,t=c.currentTime+(when||0);
+    const o=c.createOscillator(),ga=c.createGain();
+    o.type=type; o.frequency.value=f;
+    ga.gain.setValueAtTime(0.0001,t);
+    ga.gain.exponentialRampToValueAtTime(Math.max(g,0.0002),t+0.012);
+    ga.gain.exponentialRampToValueAtTime(0.0001,t+d);
+    o.connect(ga); ga.connect(c.destination); o.start(t); o.stop(t+d+0.06);
+  },
+  play:function(name){
+    if(!S.settings.sfx)return; this.ensure(); if(!this.ctx)return;
+    try{
+      if(name==='click'){this.tone(880,.06,'square',.045);}
+      else if(name==='scan'){this.tone(520,.08,'sine',.04);}
+      else if(name==='bet'){this.tone(440,.09,'sawtooth',.05);this.tone(660,.1,'sawtooth',.05,.08);}
+      else if(name==='win'){const seq=[523,659,784,1046];for(let i=0;i<seq.length;i++)this.tone(seq[i],.13,'triangle',.06,i*.08);}
+      else if(name==='loss'){this.tone(330,.14,'sawtooth',.06);this.tone(208,.22,'sawtooth',.06,.12);}
+      else if(name==='err'){this.tone(185,.22,'square',.07);this.tone(139,.3,'square',.07,.18);}
+      else if(name==='start'){this.tone(392,.09,'triangle',.05);this.tone(587,.12,'triangle',.05,.09);}
+    }catch(e){}
+  }
+};
+
+/* ================================================================
+   4. TOASTS
+================================================================ */
+function toast(msg,kind){
+  const box=$('#toasts');
+  while(box.children.length>=4)box.removeChild(box.firstChild);
+  const t=el('div','toast t-'+(kind||'info'),msg);
+  box.appendChild(t);
+  requestAnimationFrame(function(){t.classList.add('in');});
+  setTimeout(function(){t.classList.remove('in');setTimeout(function(){t.remove();},300);},3200);
+}
+
+/* ================================================================
+   5. FEED + API PANEL
+================================================================ */
+let packets=0, hbSeq=0, bootAt=Date.now();
+let latTarget=24, latShown=24;
+function feed(type,msg){
+  const list=$('#feedList'); if(!list)return;
+  const row=el('div','fl');
+  row.appendChild(el('span','ft',hhmmssms(new Date())));
+  row.appendChild(el('span','tag t-'+type,type));
+  row.appendChild(el('span','fm',msg));
+  list.appendChild(row);
+  while(list.children.length>90)list.removeChild(list.firstChild);
+  list.scrollTop=list.scrollHeight;
+  packets++; const p=$('#apiPackets'); if(p)p.textContent=String(packets);
+}
+function setLatency(ms){
+  latTarget=clamp(Math.round(ms),8,66);
+  const a=$('#apiLat'); if(a)a.textContent=latTarget+'ms';
+  const h=$('#hdrLatency'); if(h)h.textContent=latTarget+'ms';
+}
+function apiLat(){return irnd(8,66);}
+
+/* ================================================================
+   6. STATS RENDERING
+================================================================ */
+function tweenNum(elm,to,fmt,dur){
+  dur=dur||650;
+  if(elm._tw)cancelAnimationFrame(elm._tw);
+  const from=(typeof elm._val==='number')?elm._val:to;
+  if(from===to){elm.textContent=fmt(to);elm._val=to;return;}
+  const t0=performance.now();
+  const step=function(t){
+    const k=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-k,3);
+    elm.textContent=fmt(from+(to-from)*e);
+    if(k<1){elm._tw=requestAnimationFrame(step);}else{elm._tw=0;elm._val=to;}
+  };
+  elm._tw=requestAnimationFrame(step); elm._val=to;
+}
+function colorize(elm,v){elm.classList.remove('pos','neg');if(v>0.004)elm.classList.add('pos');else if(v<-0.004)elm.classList.add('neg');}
+function renderStats(settleFlash){
+  const pnl=S.balance-10000;
+  const roi=S.totalStaked>0?(pnl/S.totalStaked)*100:0;
+  const wr=S.bets>0?(S.wins/S.bets)*100:0;
+  tweenNum($('#vBank'),S.balance,fmt$);
+  const dd=S.peak>0?((S.peak-S.balance)/S.peak)*100:0;
+  $('#sBank').textContent='peak '+fmt$(S.peak)+' · dd '+dd.toFixed(1)+'%';
+  const pEl=$('#vPnl'); pEl.textContent=signed$(pnl); colorize(pEl,pnl);
+  const rEl=$('#vRoi'); rEl.textContent=(roi>=0?'+':'')+roi.toFixed(1)+'%'; colorize(rEl,roi);
+  $('#vWr').textContent=wr.toFixed(1)+'%';
+  const last10=S.history.slice(-10);
+  let w10=0,l10=0; last10.forEach(function(h){if(h.res==='WIN')w10++;else l10++;});
+  $('#sWr').textContent='last 10: '+w10+'W–'+l10+'L';
+  $('#vBets').textContent=String(S.bets);
+  $('#sBets').textContent=fmt$(S.totalStaked)+' staked';
+  $('#vWL').textContent=S.wins+' – '+S.losses;
+  $('#vStreak').textContent=S.streak>0?'W'+S.streak:'—';
+  $('#sStreak').textContent='best W'+S.bestWin;
+  $('#vOdds').textContent=S.bets>0?(S.oddsSum/S.bets).toFixed(2):'—';
+  $('#histCount').textContent=S.bets+' bets';
+  if(settleFlash){
+    const tb=$('#tileBank');tb.classList.remove('pulse-ring');void tb.offsetWidth;tb.classList.add('pulse-ring');
+    const tp=$('#tilePnl');tp.classList.remove('flash-tile');void tp.offsetWidth;tp.classList.add('flash-tile');
+  }
+}
+function screenFlash(win){
+  const f=$('#flashFx'); f.classList.remove('fw','fl'); void f.offsetWidth;
+  f.classList.add(win?'fw':'fl');
+  setTimeout(function(){f.classList.remove('fw','fl');},600);
+}
+
+/* ================================================================
+   7. CHART (canvas, DPR aware, hover tooltip)
+================================================================ */
+const Chart={
+  cv:null,cx:null,wrap:null,tip:null,w:0,h:0,hover:-1,pulse:0,raf:0,
+  init:function(){
+    this.cv=$('#chartCanvas'); this.cx=this.cv.getContext('2d');
+    this.wrap=$('#chartWrap'); this.tip=$('#chartTip');
+    const self=this;
+    if(window.ResizeObserver){new ResizeObserver(function(){self.resize();}).observe(this.wrap);}
+    window.addEventListener('resize',function(){self.resize();});
+    this.cv.addEventListener('mousemove',function(e){self.onMove(e);});
+    this.cv.addEventListener('mouseleave',function(){self.hover=-1;self.tip.style.opacity='0';self.draw();});
+    this.resize();
+  },
+  data:function(){return S.series.slice(-50);},
+  resize:function(){
+    const r=this.wrap.getBoundingClientRect();
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    const w=Math.max(60,Math.floor(r.width-16)), h=Math.max(60,Math.floor(r.height-16));
+    if(w<10||h<10)return;
+    this.cv.width=w*dpr; this.cv.height=h*dpr;
+    this.cv.style.width=w+'px'; this.cv.style.height=h+'px';
+    this.cx.setTransform(dpr,0,0,dpr,0,0);
+    this.w=w; this.h=h; this.draw();
+  },
+  geom:function(){return {padL:56,padR:16,padT:14,padB:20};},
+  draw:function(){
+    const cx=this.cx; if(!cx||!this.w)return;
+    const d=this.data(), n=d.length, w=this.w, h=this.h, g=this.geom();
+    cx.clearRect(0,0,w,h);
+    let mn=Math.min.apply(null,d.concat([10000])), mx=Math.max.apply(null,d.concat([10000]));
+    if(mx-mn<1){mn-=1;mx+=1;}
+    const span=mx-mn; mn-=span*.09; mx+=span*.09;
+    const X=function(i){return g.padL+(w-g.padL-g.padR)*(n===1?0.5:i/(n-1));};
+    const Y=function(v){return g.padT+(h-g.padT-g.padB)*(1-(v-mn)/(mx-mn));};
+    cx.font='10px "Share Tech Mono", monospace';
+    /* grid */
+    cx.strokeStyle='rgba(140,170,200,.10)'; cx.fillStyle='#6d84a0'; cx.lineWidth=1;
+    for(let r=0;r<=4;r++){
+      const v=mn+(mx-mn)*r/4, y=Y(v);
+      cx.beginPath(); cx.moveTo(g.padL,y); cx.lineTo(w-g.padR,y); cx.stroke();
+      const lab=Math.abs(v)>=1000?'$'+(v/1000).toFixed(1)+'k':'$'+v.toFixed(0);
+      cx.fillText(lab,6,y+3);
+    }
+    /* start marker */
+    if(10000>mn&&10000<mx){
+      const y0=Y(10000);
+      cx.save(); cx.setLineDash([5,5]); cx.strokeStyle='rgba(255,200,87,.55)';
+      cx.beginPath(); cx.moveTo(g.padL,y0); cx.lineTo(w-g.padR,y0); cx.stroke(); cx.restore();
+      cx.fillStyle='rgba(255,200,87,.8)'; cx.fillText('START',w-g.padR-38,y0-4);
+    }
+    /* path */
+    const up=d[n-1]>=d[0];
+    const line=up?'#2dffa3':'#ff4d6d';
+    cx.beginPath(); cx.moveTo(X(0),Y(d[0]));
+    for(let i=1;i<n;i++){
+      const xc=(X(i-1)+X(i))/2, yc=(Y(d[i-1])+Y(d[i]))/2;
+      cx.quadraticCurveTo(X(i-1),Y(d[i-1]),xc,yc);
+    }
+    cx.lineTo(X(n-1),Y(d[n-1]));
+    cx.strokeStyle=line; cx.lineWidth=2; cx.shadowColor=line; cx.shadowBlur=8; cx.stroke(); cx.shadowBlur=0;
+    /* gradient fill */
+    const grad=cx.createLinearGradient(0,g.padT,0,h-g.padB);
+    grad.addColorStop(0,up?'rgba(45,255,163,.22)':'rgba(255,77,109,.22)');
+    grad.addColorStop(1,'rgba(5,7,13,0)');
+    cx.lineTo(X(n-1),h-g.padB); cx.lineTo(X(0),h-g.padB); cx.closePath();
+    cx.fillStyle=grad; cx.fill();
+    /* last dot */
+    const pr=3+this.pulse*4;
+    cx.beginPath(); cx.arc(X(n-1),Y(d[n-1]),pr,0,Math.PI*2);
+    cx.fillStyle=line; cx.shadowColor=line; cx.shadowBlur=10+this.pulse*14; cx.fill(); cx.shadowBlur=0;
+    /* hover */
+    if(this.hover>=0&&this.hover<n){
+      const hx=X(this.hover), hy=Y(d[this.hover]);
+      cx.strokeStyle='rgba(0,240,255,.35)'; cx.setLineDash([3,4]);
+      cx.beginPath(); cx.moveTo(hx,g.padT); cx.lineTo(hx,h-g.padB); cx.stroke(); cx.setLineDash([]);
+      cx.beginPath(); cx.arc(hx,hy,4.5,0,Math.PI*2); cx.fillStyle='#00f0ff'; cx.fill();
+    }
+  },
+  onMove:function(e){
+    const d=this.data(), n=d.length; if(n<2)return;
+    const r=this.cv.getBoundingClientRect(), g=this.geom();
+    const x=e.clientX-r.left;
+    const k=clamp(Math.round(((x-g.padL)/(this.w-g.padL-g.padR))*(n-1)),0,n-1);
+    this.hover=k;
+    const betNum=S.bets-(n-1)+k;
+    this.tip.textContent=(betNum<=0?'START':'BET #'+betNum)+' · '+fmt$(d[k]);
+    const px=g.padL+(this.w-g.padL-g.padR)*(k/(n-1));
+    this.tip.style.left=clamp(px-40,4,this.w-120)+'px';
+    this.tip.style.top='6px'; this.tip.style.opacity='1';
+    this.draw();
+  },
+  bump:function(){
+    this.pulse=1; const self=this;
+    if(this.raf)cancelAnimationFrame(this.raf);
+    const anim=function(){
+      self.pulse*=0.86; self.draw();
+      if(self.pulse>0.03)self.raf=requestAnimationFrame(anim); else {self.pulse=0;self.draw();}
+    };
+    this.raf=requestAnimationFrame(anim);
+  }
+};
+function renderDelta(){
+  const d=Chart.data(); const delta=d[d.length-1]-d[0];
+  const e=$('#chartDelta');
+  e.textContent='Δ '+signed$(delta);
+  e.classList.remove('pos','neg');
+  if(delta>0.004)e.classList.add('pos'); else if(delta<-0.004)e.classList.add('neg');
+}
+
+/* ================================================================
+   8. HISTORY
+================================================================ */
+function addHistoryRow(row,anim){
+  $('#histEmpty').hidden=true;
+  const tb=$('#histBody');
+  const tr=el('tr','hrow '+(row.res==='WIN'?'win':'loss')+(anim?' anim':''));
+  const tdT=el('td','mono',row.time); tdT.style.color='var(--tx3)';
+  const tdE=el('td','ev-cell'); tdE.appendChild(document.createTextNode(row.ev));
+  tdE.appendChild(el('small',null,row.market));
+  const tdO=el('td','num mono',row.odds.toFixed(2));
+  const tdS=el('td','num mono',fmt$(row.stake));
+  const tdR=el('td'); tdR.appendChild(el('span','res-badge '+(row.res==='WIN'?'w':'l'),row.res));
+  const tdP=el('td','num mono '+(row.pnl>=0?'pos':'neg'),signed$(row.pnl));
+  tr.appendChild(tdT);tr.appendChild(tdE);tr.appendChild(tdO);tr.appendChild(tdS);tr.appendChild(tdR);tr.appendChild(tdP);
+  tb.appendChild(tr);
+  while(tb.children.length>300)tb.removeChild(tb.firstChild);
+  const sc=$('#histScroll'); sc.scrollTop=sc.scrollHeight;
+}
+function rebuildHistory(){
+  const tb=$('#histBody'); tb.textContent='';
+  if(!S.history.length){$('#histEmpty').hidden=false;return;}
+  $('#histEmpty').hidden=true;
+  S.history.forEach(function(h){addHistoryRow(h,false);});
+}
+
+/* ================================================================
+   9. DECISION PANEL
+================================================================ */
+function setDecState(st){$('#decBadge').dataset.state=st;$('#decBadge').textContent=st;}
+function decisionRow(label,val,cls){
+  const box=el('div','d-item');
+  box.appendChild(el('div','dl',label));
+  const v=el('div','dv',val); if(cls)v.classList.add(cls);
+  box.appendChild(v); return box;
+}
+function renderDecision(ev,dec){
+  const box=$('#decContent'); box.textContent='';
+  const evBox=el('div','dec-ev'); evBox.textContent=ev.title;
+  evBox.appendChild(el('small',null,ev.market+' · '+ev.label+' · '+ev.evId));
+  box.appendChild(evBox);
+  const grid=el('div','dec-grid');
+  grid.appendChild(decisionRow('Odds',ev.odds.toFixed(2)));
+  grid.appendChild(decisionRow('Implied',dec.imp.toFixed(1)+'%'));
+  grid.appendChild(decisionRow('Model P',dec.model.toFixed(1)+'%'));
+  const edgeCls=dec.edge>=3?'pos':(dec.edge>=0?'warn':'neg');
+  grid.appendChild(decisionRow('Edge',(dec.edge>=0?'+':'')+dec.edge.toFixed(1)+'%',edgeCls));
+  if(dec.bet){
+    grid.appendChild(decisionRow('Kelly f',(dec.f).toFixed(1)+'% × '+S.settings.kelly.toFixed(2)));
+    grid.appendChild(decisionRow('Stake',fmt$(dec.stake),'pos'));
+  }else{
+    grid.appendChild(decisionRow('Threshold','+3.0%','warn'));
+  }
+  box.appendChild(grid);
+  const act=el('span','act-badge '+(dec.bet?'act-bet':'act-nobet'),dec.bet?'BET PLACED':'NO BET');
+  box.appendChild(act);
+  const rs=el('p','dec-reason');
+  if(dec.bet){
+    rs.textContent='Model prices '+ev.a+' at '+dec.model.toFixed(1)+'% vs market implied '+dec.imp.toFixed(1)+
+      '% → +'+dec.edge.toFixed(1)+'% edge ≥ +3.0% threshold. Full-Kelly '+dec.f.toFixed(1)+'% × '+
+      S.settings.kelly.toFixed(2)+'× → stake '+fmt$(dec.stake)+' committed.';
+  }else if(dec.edge<0){
+    rs.textContent='Negative edge ('+dec.edge.toFixed(1)+'%) — market is pricing '+ev.a+' above model fair value. No value detected, capital protected.';
+  }else if(dec.f<=0||dec.stake<5){
+    rs.textContent='Edge +'+dec.edge.toFixed(1)+'% but Kelly stake resolves below the $5 minimum — position skipped, standing by.';
+  }else{
+    rs.textContent='Edge +'+dec.edge.toFixed(1)+'% below the +3% value threshold — capital protected, standing by.';
+  }
+  box.appendChild(rs);
+}
+function renderDecisionStandby(msg){
+  const box=$('#decContent'); box.textContent='';
+  const w=el('div','empty-state'); w.style.padding='18px 6px';
+  w.appendChild(el('b',null,'ENGINE STANDBY'));
+  w.appendChild(document.createTextNode(msg||'Engine offline. Press START BOT to begin scanning live markets for value.'));
+  box.appendChild(w);
+}
+
+/* ================================================================
+   10. OPEN BET CARD
+================================================================ */
+function showOpenBet(){
+  const p=S.pending; if(!p)return;
+  $('#obEvent').firstChild.nodeValue=p.ev+' ';
+  $('#obMarket').textContent=p.market;
+  $('#obOdds').textContent=p.odds.toFixed(2);
+  $('#obStake').textContent=fmt$(p.stake);
+  $('#obReturn').textContent=fmt$(p.ret);
+  $('#obBar').style.width='0%';
+  $('#openBet').classList.add('show');
+}
+function hideOpenBet(){$('#openBet').classList.remove('show');$('#obBar').style.width='0%';}
+
+/* ================================================================
+   11. ENGINE STATE MACHINE
+================================================================ */
+let phase=null, tCycle=0, inApp=false, user=null;
+function setStatus(st){
+  const pill=$('#pillStatus');
+  pill.dataset.state=st; $('#pillTxt').textContent=st;
+  const map={IDLE:'STANDBY',SCANNING:'SCANNING',WAITING:'WAITING',BETTING:'BETTING',ERROR:'ERROR'};
+  setDecState(map[st]||'STANDBY');
+}
+function updateEngineUI(){
+  const btn=$('#btnEngine');
+  btn.dataset.on=S.running?'1':'0';
+  btn.setAttribute('aria-pressed',String(S.running));
+  btn.innerHTML=S.running?'■ &nbsp;STOP BOT':'▶ &nbsp;START BOT';
+  const led=$('#ledEng'), led2=$('#ledEng2'), txt=$('#engTxt');
+  led.classList.toggle('on',S.running);
+  led.classList.toggle('err',!S.running&&$('#pillStatus').dataset.state==='ERROR');
+  led2.classList.toggle('on',S.running);
+  led2.classList.toggle('err',!S.running&&$('#pillStatus').dataset.state==='ERROR');
+  txt.textContent=S.running?'ENGINE ACTIVE':($('#pillStatus').dataset.state==='ERROR'?'ENGINE ERROR':(S.pending?'ENGINE PAUSED':'ENGINE STANDBY'));
+}
+function setPhase(type,ms,cb){
+  clearTimeout(tCycle);
+  phase={type:type,end:performance.now()+ms,dur:ms,cb:cb};
+  tCycle=setTimeout(cb,ms);
+}
+function phaseWait(cb,ms){setPhase('wait',ms,cb);}
+function scheduleNextScan(){
+  if(!S.running)return;
+  setStatus('WAITING');
+  const ms=(3000+Math.random()*5000)/S.settings.speed+rnd(0,250);
+  setPhase('scan',ms,doScan);
+}
+function rescalePhase(oldSp,newSp){
+  if(!phase||oldSp===newSp)return;
+  const rem=phase.end-performance.now(); if(rem<=0)return;
+  const scaled=rem*oldSp/newSp;
+  clearTimeout(tCycle);
+  phase.end=performance.now()+scaled;
+  phase.dur=Math.max(1,phase.dur*oldSp/newSp);
+  tCycle=setTimeout(phase.cb,scaled);
+  if(phase.type==='settle'&&S.pending)S.pending.settleAt=Date.now()+scaled;
+}
+function startEngine(){
+  if(S.running)return;
+  if(S.balance<5){toast('⛔ Bankroll below minimum — reset session to continue','err');return;}
+  S.running=true;
+  setStatus('SCANNING'); updateEngineUI(); SFX.play('start');
+  feed('SYS','engine online · kelly '+S.settings.kelly.toFixed(2)+'× · speed '+S.settings.speed.toFixed(2)+'×');
+  toast('▶ Engine online — scanning synthetic markets','ok');
+  if(S.pending){
+    /* let the restored open bet settle first, then resume scanning */
+    setStatus('BETTING');
+  }else{
+    scheduleNextScan();
+  }
+  save();
+}
+function stopEngine(reason){
+  S.running=false;
+  if(!(phase&&phase.type==='settle')){clearTimeout(tCycle);phase=null;}
+  setStatus(reason==='user'?'IDLE':'ERROR');
+  updateEngineUI(); save();
+}
+function tripGuard(){
+  S.running=false; clearTimeout(tCycle); phase=null;
+  setStatus('ERROR'); updateEngineUI();
+  feed('ERR','drawdown guard tripped · −25% from peak · engine auto-halted');
+  toast('⛔ Drawdown guard tripped — engine halted','err'); SFX.play('err'); save();
+}
+function doScan(){
+  if(!S.running)return;
+  setStatus('SCANNING'); SFX.play('scan');
+  const ev=genEvent();
+  const lat=apiLat();
+  setLatency(lat);
+  setTimeout(function(){
+    if(!S.running)return;
+    if(Math.random()<0.04){
+      feed('ERR','GET /v2/markets/live?sport='+ev.slug+' 429 · rate-limited, backing off');
+      setPhase('wait',900,doScan); return;
+    }
+    feed('GET','/v2/markets/live?sport='+ev.slug+' 200 · events='+irnd(6,16));
+    setTimeout(function(){
+      if(!S.running)return;
+      const dec=evaluate(ev,S.settings.kelly);
+      feed('POST','/v2/model/inference 200 · p='+dec.model.toFixed(1)+'% implied='+dec.imp.toFixed(1)+'%');
+      renderDecision(ev,dec);
+      if(dec.bet){placeBet(ev,dec);}
+      else{setStatus('WAITING');phaseWait(scheduleNextScan,rnd(500,1200));}
+    },120);
+  },lat*2+60);
+}
+function placeBet(ev,dec){
+  const stake=dec.stake;
+  S.balance-=stake; S.totalStaked+=stake;
+  const id=irnd(40000,99999);
+  const settleMs=(2500+Math.random()*3500)/S.settings.speed;
+  S.pending={id:id,ev:ev.title,market:ev.market,odds:ev.odds,stake:stake,
+    ret:stake*ev.odds,settleAt:Date.now()+settleMs,willWin:Math.random()<ev.trueP};
+  setStatus('BETTING'); updateEngineUI(); SFX.play('bet');
+  feed('WS','order.ack ORD-'+id+' stake '+fmt$(stake)+' @ '+ev.odds.toFixed(2));
+  const tb=$('#tileBank'); tb.classList.remove('pulse-ring'); void tb.offsetWidth; tb.classList.add('pulse-ring');
+  renderStats(false); showOpenBet();
+  setPhase('settle',settleMs,settleBet);
+  save();
+}
+function settleBet(){
+  const p=S.pending; if(!p)return;
+  S.pending=null; phase=null;
+  const win=p.willWin;
+  const pnl=win?p.stake*(p.odds-1):-p.stake;
+  if(win)S.balance+=p.stake*p.odds;
+  S.bets++;
+  if(win){S.wins++;S.streak++;S.bestWin=Math.max(S.bestWin,S.streak);}
+  else{S.losses++;S.streak=0;}
+  S.oddsSum+=p.odds;
+  if(S.balance>S.peak)S.peak=S.balance;
+  S.series.push(S.balance);
+  if(S.series.length>400)S.series=S.series.slice(-200);
+  const row={time:hhmmss(new Date()),ev:p.ev,market:p.market,odds:p.odds,stake:p.stake,res:win?'WIN':'LOSS',pnl:pnl,bal:S.balance};
+  S.history.push(row);
+  if(S.history.length>300)S.history.shift();
+  hideOpenBet(); addHistoryRow(row,true);
+  renderStats(true); Chart.bump(); renderDelta(); screenFlash(win);
+  SFX.play(win?'win':'loss');
+  feed(win?'OK':'ERR','settlement ORD-'+p.id+' '+(win?'WON':'LOST')+' · pnl '+signed$(pnl));
+  save();
+  if(S.settings.guard&&S.balance<=S.peak*0.75){tripGuard();return;}
+  if(S.balance<5){
+    S.running=false; setStatus('ERROR'); updateEngineUI();
+    feed('ERR','bankroll below minimum · engine halted'); toast('⛔ Bankroll depleted below minimum','err'); SFX.play('err'); save(); return;
+  }
+  updateEngineUI();
+  if(S.running)phaseWait(scheduleNextScan,rnd(500,1000));
+}
+function toggleEngine(){
+  if(S.running){
+    stopEngine('user');
+    feed('SYS','engine stopped by operator'); toast('■ Engine stopped','info'); SFX.play('click');
+  }else{
+    startEngine();
+  }
+}
+
+/* ================================================================
+   12. EXPORT / RESET
+================================================================ */
+function exportCSV(){
+  try{
+    const rows=[['Time','Event','Market','Odds','Stake','Result','P&L','Balance After']];
+    S.history.forEach(function(h){
+      rows.push([h.time,h.ev,h.market,h.odds.toFixed(2),h.stake.toFixed(2),h.res,h.pnl.toFixed(2),h.bal.toFixed(2)]);
+    });
+    const csv=rows.map(function(r){
+      return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');
+    }).join('\r\n');
+    const d=new Date();
+    const stamp=d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes());
+    const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download='neonedge_bets_'+stamp+'.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+    feed('SYS','export CSV · '+S.history.length+' rows'); toast('⇩ CSV exported — '+S.history.length+' rows','ok'); SFX.play('click');
+  }catch(e){toast('Export failed','err');}
+}
+let resetArmed=false, resetTimer=0;
+function disarmReset(){
+  resetArmed=false; clearTimeout(resetTimer);
+  const b=$('#btnReset'); b.classList.remove('armed'); b.textContent='⟳ Reset Session';
+}
+function armReset(){
+  if(resetArmed){doReset();return;}
+  resetArmed=true;
+  const b=$('#btnReset'); b.classList.add('armed'); b.textContent='⚠ Sure? Click again';
+  toast('⟳ Reset armed — press again within 3s to confirm','warn'); SFX.play('click');
+  resetTimer=setTimeout(disarmReset,3000);
+}
+function doReset(){
+  disarmReset();
+  S.running=false; clearTimeout(tCycle); phase=null;
+  store.del(KEY_STATE);
+  S=freshDefaults(); save();
+  $('#histBody').textContent=''; $('#histEmpty').hidden=false;
+  hideOpenBet(); renderDecisionStandby();
+  setStatus('IDLE'); updateEngineUI();
+  $('#scanCd').textContent='—';
+  syncControls(); renderStats(false); Chart.draw(); renderDelta();
+  feed('SYS','session reset · bankroll restored to $10,000.00');
+  toast('⟳ Session reset — bankroll restored','info'); SFX.play('click');
+}
+
+/* ================================================================
+   13. CONTROL BINDINGS
+================================================================ */
+function syncControls(){
+  $('#rngSpeed').value=S.settings.speed;
+  $('#outSpeed').textContent=S.settings.speed.toFixed(2)+'×';
+  $('#rngKelly').value=S.settings.kelly;
+  $('#outKelly').textContent=S.settings.kelly.toFixed(2)+'×';
+  $('#numStake').value=S.settings.maxStake;
+  const g=$('#btnGuard'); g.setAttribute('aria-checked',String(S.settings.guard));
+  $('#guardTxt').textContent=S.settings.guard?'ARMED — auto-stop at −25% from bankroll peak':'DISARMED — engine will not auto-stop';
+  const sx=$('#btnSfx'); sx.setAttribute('aria-pressed',String(S.settings.sfx));
+  sx.textContent=S.settings.sfx?'SFX ON':'SFX OFF';
+}
+function bindControls(){
+  $('#btnEngine').addEventListener('click',toggleEngine);
+  $('#btnExport').addEventListener('click',exportCSV);
+  $('#btnReset').addEventListener('click',armReset);
+  $('#rngSpeed').addEventListener('input',function(e){
+    const v=parseFloat(e.target.value);
+    $('#outSpeed').textContent=v.toFixed(2)+'×';
+  });
+  $('#rngSpeed').addEventListener('change',function(e){
+    const v=clamp(parseFloat(e.target.value)||1,1,5);
+    const old=S.settings.speed; S.settings.speed=v;
+    rescalePhase(old,v); save();
+  });
+  $('#rngKelly').addEventListener('input',function(e){
+    $('#outKelly').textContent=parseFloat(e.target.value).toFixed(2)+'×';
+  });
+  $('#rngKelly').addEventListener('change',function(e){
+    S.settings.kelly=clamp(parseFloat(e.target.value)||0.5,0.25,1.5); save();
+  });
+  $('#numStake').addEventListener('change',function(e){
+    let v=Math.round((parseFloat(e.target.value)||500)/10)*10;
+    v=clamp(v,10,25000); e.target.value=v;
+    S.settings.maxStake=v; save();
+  });
+  $('#btnGuard').addEventListener('click',function(){
+    S.settings.guard=!S.settings.guard;
+    this.setAttribute('aria-checked',String(S.settings.guard));
+    $('#guardTxt').textContent=S.settings.guard?'ARMED — auto-stop at −25% from bankroll peak':'DISARMED — engine will not auto-stop';
+    feed('SYS','drawdown guard '+(S.settings.guard?'armed':'disarmed'));
+    SFX.play('click'); save();
+  });
+  $('#btnSfx').addEventListener('click',function(){
+    S.settings.sfx=!S.settings.sfx;
+    this.setAttribute('aria-pressed',String(S.settings.sfx));
+    this.textContent=S.settings.sfx?'SFX ON':'SFX OFF';
+    if(S.settings.sfx){SFX.ensure();SFX.play('click');}
+    save();
+  });
+  $('#demoClose').addEventListener('click',function(){$('#demoBanner').hidden=true;});
+  $('#btnSignout').addEventListener('click',signOut);
+  window.addEventListener('keydown',function(e){
+    if(!inApp)return;
+    const t=e.target, tag=(t&&t.tagName||'').toLowerCase();
+    if(tag==='input'||tag==='textarea'||tag==='select')return;
+    if(e.code==='Space'){
+      if(tag==='button')return; /* native activation */
+      e.preventDefault(); toggleEngine();
+    }else if(e.key==='r'||e.key==='R'){armReset();}
+    else if(e.key==='e'||e.key==='E'){exportCSV();}
+  });
+}
+
+/* ================================================================
+   14. AUTH
+================================================================ */
+let lock={n:0,until:0};
+try{const l=JSON.parse(store.get(KEY_LOCK)||'null');if(l&&typeof l==='object')lock={n:l.n|0,until:l.until|0};}catch(e){}
+function saveLock(){store.set(KEY_LOCK,JSON.stringify(lock));}
+function siError(msg){$('#siErr').textContent=msg||'';}
+function suError(msg){$('#suErr').textContent=msg||'';}
+function loginSuccess(u){
+  user=u; store.set(KEY_AUTH,JSON.stringify(u));
+  showApp();
+}
+function showApp(){
+  inApp=true;
+  $('#authView').hidden=true; $('#appView').hidden=false;
+  $('#demoBanner').hidden=!(user&&user.demo);
+  renderStats(false); rebuildHistory(); syncControls(); renderDelta(); updateEngineUI();
+  requestAnimationFrame(function(){Chart.resize();});
+  if(S.pending){
+    showOpenBet();
+    const rem=S.pending.settleAt-Date.now();
+    if(rem<=0)setTimeout(settleBet,350);
+    else setPhase('settle',rem,settleBet);
+    feed('SYS','restored open bet ORD-'+S.pending.id+' · settles in '+(Math.max(0,rem)/1000).toFixed(1)+'s');
+  }
+  feed('SYS','operator authenticated · '+(user?user.email:'demo@neonedge.com'));
+}
+function signOut(){
+  S.running=false; clearTimeout(tCycle); phase=null;
+  inApp=false; user=null;
+  store.del(KEY_AUTH);
+  $('#appView').hidden=true; $('#authView').hidden=false;
+  $('#frmSignin').reset(); $('#frmSignup').reset(); siError(''); suError('');
+  $('#pwBar').className='pwbar'; $('#pwLabel').textContent='Strength: —';
+}
+function lockActive(){return lock.until>Date.now();}
+function lockTick(btn){
+  if(!lockActive()){btn.disabled=false;siError('');return;}
+  btn.disabled=true;
+  siError('Too many attempts — try again in '+Math.ceil((lock.until-Date.now())/1000)+'s');
+}
+function registerFail(btn){
+  lock.n++;
+  if(lock.n>=3){lock.n=0;lock.until=Date.now()+30000;toast('🔒 Too many attempts — 30s cooldown','warn');}
+  saveLock(); lockTick(btn);
+}
+function bindAuth(){
+  $('#lnkForgot').addEventListener('click',function(e){
+    e.preventDefault(); toast('📧 Password reset link sent (simulation)','info');
+  });
+  $('#suPass').addEventListener('input',function(){
+    const v=this.value; let s=0;
+    if(v.length>=8)s++; if(/[A-Z]/.test(v))s++; if(/\d/.test(v))s++; if(/[^A-Za-z0-9]/.test(v))s++;
+    const bar=$('#pwBar'); bar.className='pwbar'+(v?' s'+s:'');
+    const lab=v?(s<=1?'Weak':(s<=3?'Medium':'Strong')):'—';
+    $('#pwLabel').textContent='Strength: '+lab;
+  });
+  $('#frmSignin').addEventListener('submit',function(e){
+    e.preventDefault();
+    const btn=$('#btnSignin');
+    if(lockActive()){lockTick(btn);return;}
+    const em=$('#siEmail').value.trim(), pw=$('#siPass').value;
+    $('#siEmail').setAttribute('aria-invalid',String(!emailOk(em)));
+    $('#siPass').setAttribute('aria-invalid',String(pw.length<6));
+    if(!emailOk(em)){siError('Enter a valid email address.');registerFail(btn);return;}
+    if(pw.length<6){siError('Password must be at least 6 characters.');registerFail(btn);return;}
+    siError(''); btn.disabled=true; btn.textContent='AUTHENTICATING…';
+    setTimeout(function(){btn.disabled=false;btn.textContent='Sign In';loginSuccess({email:em,demo:false});},650);
+  });
+  $('#frmSignup').addEventListener('submit',function(e){
+    e.preventDefault();
+    const nm=$('#suName').value.trim(), em=$('#suEmail').value.trim(),
+          p1=$('#suPass').value, p2=$('#suPass2').value;
+    let err='';
+    if(nm.length<2)err='Please enter your name.';
+    else if(!emailOk(em))err='Enter a valid email address.';
+    else if(p1.length<8)err='Password must be at least 8 characters.';
+    else if(p1!==p2)err='Passwords do not match.';
+    suError(err);
+    ['suName','suEmail','suPass','suPass2'].forEach(function(id){$('#'+id).setAttribute('aria-invalid','false');});
+    if(err){$('#suErr').previousElementChild;return;}
+    const btn=$('#btnSignup'); btn.disabled=true; btn.textContent='CREATING…';
+    setTimeout(function(){btn.disabled=false;btn.textContent='Create Account';loginSuccess({email:em,name:nm,demo:false});},650);
+  });
+  $('#btnDemo').addEventListener('click',function(){
+    const b=this; b.disabled=true; b.textContent='⏳ INITIALIZING…';
+    setTimeout(function(){b.disabled=false;b.textContent='🚀 Launch Demo';loginSuccess({email:'demo@neonedge.com',name:'Demo Operator',demo:true});},450);
+  });
+}
+function checkAuth(){
+  const raw=store.get(KEY_AUTH);
+  if(raw){try{const u=JSON.parse(raw);if(u&&u.email){user=u;showApp();return;}}catch(e){}}
+  $('#authView').hidden=false;
+}
+
+/* ================================================================
+   15. GLOBAL TICKERS
+================================================================ */
+function startTickers(){
+  /* 100ms — countdowns + open bet progress */
+  setInterval(function(){
+    if(!inApp)return;
+    const cd=$('#scanCd');
+    if(phase){
+      const rem=Math.max(0,phase.end-performance.now());
+      if(phase.type==='scan')cd.textContent=(rem/1000).toFixed(1)+'s';
+      else if(phase.type==='settle'){
+        cd.textContent='SETTLE '+(rem/1000).toFixed(1)+'s';
+        if(S.pending){
+          const k=clamp(1-rem/Math.max(1,phase.dur),0,1);
+          $('#obBar').style.width=(k*100).toFixed(1)+'%';
+          $('#obTime').textContent='SETTLES IN '+(rem/1000).toFixed(1)+'s';
+        }
+      }else cd.textContent='· · ·';
+    }else{
+      cd.textContent=S.running?'…':'—';
+      if(S.pending)$('#obBar').style.width='100%';
+    }
+  },100);
+  /* 1s — clock, uptime, latency drift, lock countdown */
+  setInterval(function(){
+    $('#hdrClock').textContent=hhmmss(new Date());
+    if(inApp){
+      const up=Math.floor((Date.now()-bootAt)/1000);
+      $('#apiUptime').textContent=pad(Math.floor(up/3600))+':'+pad(Math.floor(up/60)%60)+':'+pad(up%60);
+      if(Math.random()<0.35){
+        latTarget=clamp(latTarget+irnd(-3,3),16,48);
+        const a=$('#apiLat');a.textContent=latTarget+'ms';
+        $('#hdrLatency').textContent=latTarget+'ms';
+      }
+    }
+    if(!$('#authView').hidden&&lockActive())lockTick($('#btnSignin'));
+  },1000);
+  /* 15s — API heartbeat */
+  setInterval(function(){
+    if(!inApp)return;
+    hbSeq++; packets+=2;
+    $('#apiPackets').textContent=String(packets);
+    feed('WS','heartbeat · seq='+hbSeq+' · ok · '+latTarget+'ms');
+  },15000);
+}
+
+/* ================================================================
+   16. INIT
+================================================================ */
+function init(){
+  loadState();
+  Chart.init();
+  bindControls();
+  bindAuth();
+  setStatus('IDLE'); updateEngineUI(); renderStats(false); renderDelta(); syncControls();
+  feed('SYS','sim core v4.2.1-prod boot · seed OK · all data synthetic');
+  feed('OK','ws connect wss://odds.neonedge.sim/v2 · '+latTarget+'ms');
+  feed('SYS','educational simulation · no real money · no real bets');
+  startTickers();
+  checkAuth();
+}
+init();
+})();
+</script>
+</body>
+</html>
